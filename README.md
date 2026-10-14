@@ -43,6 +43,26 @@ Optional environment variables:
 | `REJECT_CAP_PERCENT` | `5` | Max share of a file's payments that may be declined |
 | `RANDOM_SEED` | unset | Set for repeatable rejections |
 
+## Docker
+
+```bash
+docker build -t fraud-check-stub .
+docker run --rm -p 9090:9090 fraud-check-stub
+```
+
+Override settings with `-e`, for example `-e REJECT_CAP_PERCENT=10 -e RANDOM_SEED=42`.
+The image runs uvicorn with the h11 parser (see "Run" above for why) and has a
+`/health` healthcheck.
+
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest                 # all tests
+pytest tests/unit      # rejection rule and endpoints, in process
+pytest -m component    # real uvicorn server over HTTP, incl. the Java-style h2c upgrade request
+```
+
 ## Point the processor at it
 
 The processor already defaults to this address
